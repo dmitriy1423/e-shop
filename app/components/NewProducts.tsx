@@ -5,6 +5,7 @@ import { FC } from 'react'
 import styled from 'styled-components'
 import Center from './Center'
 import ProductBox from './ProductBox'
+import { RevealWrapper } from 'next-reveal'
 
 const ProductsGrid = styled.div`
 	display: grid;
@@ -19,11 +20,13 @@ interface NewProductsProps {
 const NewProducts: FC<NewProductsProps> = ({ products }) => {
 	return (
 		<Center>
-			<h2 className='text-3xl mt-7 mb-5 font-bold'>New Arrivals</h2>
-			<div className='grid gap-8 grid-cols-2 md:grid-cols-3 xl:grid-cols-4'>
+			<h2 className="text-3xl mt-7 mb-5 font-bold">New Arrivals</h2>
+			<div className="grid gap-8 grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
 				{products.length > 0 &&
-					products.map(product => (
-						<ProductBox product={product} key={product.id} />
+					products.map((product, index) => (
+						<RevealWrapper delay={index * 50} key={product.id}>
+							<ProductBox product={product} />
+						</RevealWrapper>
 					))}
 			</div>
 		</Center>

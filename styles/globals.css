@@ -8,6 +8,14 @@ body {
 	background-color: #eeeeee;
 }
 
+nav a {
+	color: #aaaaaa;
+}
+
+nav a:hover {
+	color: #fff;
+}
+
 table th {
 	text-align: left;
 	text-transform: uppercase;

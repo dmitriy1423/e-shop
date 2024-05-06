@@ -11,6 +11,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useCartStore } from '@/store/cartStore'
 import NullData from './NullData'
+import { RevealWrapper } from 'next-reveal'
 
 const Bg = styled.div`
 	background-color: #222222;
@@ -57,42 +58,46 @@ const Featured: FC<FeaturedProps> = ({ product }) => {
 	const cart = useCartStore()
 
 	if (!product) {
-		return <NullData title='No product' />
+		return <NullData title="No product" />
 	}
 
 	return (
 		<Bg>
 			<Center>
-				<div className='flex flex-col items-center md:grid md:grid-cols-2'>
+				<div className="flex flex-col items-center md:grid md:grid-cols-2">
 					<Column>
-						<div className='order-1 md:order-2'>
-							<Title>{product.title}</Title>
-							<Desc>{product.description}</Desc>
-							<ButtonsWrapper>
-								<Link
-									href={`/product/${product.id}`}
-									className='flex items-center border border-white rounded-lg px-2'
-								>
-									Read more
-								</Link>
-								<div className='max-w-[600px]'>
-									<Button
-										onClick={() => cart.addToCart(product)}
-										label='Add to cart'
-										icon={FaCartArrowDown}
-										white
-									/>
-								</div>
-							</ButtonsWrapper>
+						<div className="order-1 md:order-2">
+							<RevealWrapper origin={'left'} delay={0}>
+								<Title>{product.title}</Title>
+								<Desc>{product.description}</Desc>
+								<ButtonsWrapper>
+									<Link
+										href={`/product/${product.id}`}
+										className="flex items-center border border-white rounded-lg px-2"
+									>
+										Read more
+									</Link>
+									<div className="max-w-[600px]">
+										<Button
+											onClick={() => cart.addToCart(product)}
+											label="Add to cart"
+											icon={FaCartArrowDown}
+											white
+										/>
+									</div>
+								</ButtonsWrapper>
+							</RevealWrapper>
 						</div>
 					</Column>
-					<div className='flex justify-center -order-1 md:order-1'>
-						<Image
-							src={product.images[0]}
-							alt={product.title}
-							width={250}
-							height={250}
-						/>
+					<div className="flex justify-center -order-1 md:order-1">
+						<RevealWrapper delay={0}>
+							<Image
+								src={product.images[0]}
+								alt={product.title}
+								width={250}
+								height={250}
+							/>
+						</RevealWrapper>
 					</div>
 				</div>
 			</Center>

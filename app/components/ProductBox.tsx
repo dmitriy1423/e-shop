@@ -2,13 +2,14 @@
 
 import { Product } from '@prisma/client'
 import Image from 'next/image'
-import { FC, useContext } from 'react'
+import { FC, useContext, useState } from 'react'
 import styled from 'styled-components'
 import Button from './Button'
 import { FaCartArrowDown } from 'react-icons/fa'
 import Link from 'next/link'
 import { useCartStore } from '@/store/cartStore'
 import { MdOutlineImage } from 'react-icons/md'
+import { motion } from 'framer-motion'
 
 const ProductWrapper = styled.div``
 
@@ -42,35 +43,36 @@ interface ProductBoxProps {
 }
 
 const ProductBox: FC<ProductBoxProps> = ({ product }) => {
-	/* const { addProduct } = useContext(CartContext) */
 	const cart = useCartStore()
 
 	return (
 		<ProductWrapper>
 			<Link href={`/product/${product.id}`}>
 				<WhiteBox>
-					<div className='aspect-square overflow-hidden relative'>
+					<div className="aspect-square overflow-hidden relative">
 						{product.images.length > 0 ? (
 							<Image
 								src={product.images[0]}
 								alt={product.title}
 								fill
-								className='object-contain'
+								className="object-contain"
 							/>
 						) : (
-							<MdOutlineImage className='w-full h-full' />
+							<MdOutlineImage className="w-full h-full" />
 						)}
 					</div>
 				</WhiteBox>
 			</Link>
-			<div className='flex flex-col items-center gap-2'>
+			<div className="flex flex-col items-center gap-2">
 				<Link href={`/product/${product.id}`}>{product.title}</Link>
-				<div className='flex flex-col w-full items-center justify-between sm:flex-row'>
+				<div className="flex flex-col w-full items-center justify-between sm:flex-row">
 					<Price>${product.price}</Price>
-					<div className='w-full sm:w-auto'>
+					<div className="w-full sm:w-auto">
 						<Button
-							onClick={() => cart.addToCart(product)}
-							label='Add to cart'
+							onClick={() => {
+								cart.addToCart(product)
+							}}
+							label="Add to cart"
 							small
 							outline
 						/>

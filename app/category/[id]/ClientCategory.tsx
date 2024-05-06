@@ -3,6 +3,7 @@
 import ProductBox from '@/app/components/ProductBox'
 import { Category, Product, Property } from '@prisma/client'
 import axios from 'axios'
+import { RevealWrapper } from 'next-reveal'
 import { ChangeEvent, FC, useEffect, useState } from 'react'
 import { FieldValues, useForm } from 'react-hook-form'
 
@@ -21,7 +22,7 @@ interface ClientCategoryProps {
 const ClientCategory: FC<ClientCategoryProps> = ({
 	category,
 	products,
-	subCategories,
+	subCategories
 }) => {
 	const [filtersValues, setFiltersValues] = useState<{ [key: string]: string }>(
 		{}
@@ -36,7 +37,7 @@ const ClientCategory: FC<ClientCategoryProps> = ({
 	const handleFilterChange = (filterName: string, filterValue: string) => {
 		setFiltersValues(prevValues => ({
 			...prevValues,
-			[filterName]: filterValue,
+			[filterName]: filterValue
 		}))
 	}
 
@@ -102,21 +103,21 @@ const ClientCategory: FC<ClientCategoryProps> = ({
 
 	return (
 		<>
-			<div className='flex items-center justify-between'>
-				<h1 className='text-3xl font-bold mb-4'>{category.name}</h1>
-				<div className='flex items-center gap-4'>
+			<div className="flex items-center justify-between">
+				<h1 className="text-3xl font-bold mb-4">{category.name}</h1>
+				<div className="flex items-center gap-4">
 					{category?.properties?.map(prop => (
 						<div
 							key={prop.id}
-							className='flex items-center gap-1 bg-gray-300 py-1 px-2 rounded-md'
+							className="flex items-center gap-1 bg-gray-300 py-1 px-2 rounded-md"
 						>
 							<span>{prop.name}:</span>
 							<select
 								onChange={e => handleFilterChange(prop.name, e.target.value)}
 								value={filtersValues[prop.name]}
-								className='bg-transparent border-0'
+								className="bg-transparent border-0"
 							>
-								<option value='all'>All</option>
+								<option value="all">All</option>
 								{prop.values.map(val => (
 									<option key={val} value={val}>
 										{val}
@@ -125,29 +126,31 @@ const ClientCategory: FC<ClientCategoryProps> = ({
 							</select>
 						</div>
 					))}
-					<div className='flex items-center gap-1 bg-gray-300 py-1 px-2 rounded-md'>
+					<div className="flex items-center gap-1 bg-gray-300 py-1 px-2 rounded-md">
 						<span>Sort:</span>
 						<select
 							onChange={handleSortChange}
 							value={sort}
-							className='bg-transparent border-0'
+							className="bg-transparent border-0"
 						>
-							<option value='price-asc'>price, lowest first</option>
-							<option value='price-desc'>price, highest first</option>
-							<option value='create-desc'>Newest first</option>
-							<option value='create-asc'>Oldest first</option>
+							<option value="price-asc">price, lowest first</option>
+							<option value="price-desc">price, highest first</option>
+							<option value="create-desc">Newest first</option>
+							<option value="create-asc">Oldest first</option>
 						</select>
 					</div>
 				</div>
 			</div>
 			{filteredProducts.length > 0 ? (
-				<div className='grid gap-8 grid-cols-2 md:grid-cols-3 xl:grid-cols-4'>
-					{filteredProducts.map(product => (
-						<ProductBox product={product} key={product.id} />
+				<div className="grid gap-8 grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
+					{filteredProducts.map((product, index) => (
+						<RevealWrapper delay={index * 50} key={product.id}>
+							<ProductBox product={product} key={product.id} />
+						</RevealWrapper>
 					))}
 				</div>
 			) : (
-				<div className='text-3xl font-bold text-center'>No products</div>
+				<div className="text-3xl font-bold text-center">No products</div>
 			)}
 		</>
 	)
