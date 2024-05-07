@@ -10,10 +10,12 @@ import { useEffect, useState } from 'react'
 import axios from 'axios'
 import Link from 'next/link'
 import { RevealWrapper } from 'next-reveal'
+import Skeleton from 'react-loading-skeleton'
 
 const Cart = () => {
 	const cart = useCartStore()
 	const [isSuccess, setIsSuccess] = useState(false)
+	const [isLoading, setIsLoading] = useState(false)
 
 	const {
 		register,
@@ -45,6 +47,20 @@ const Cart = () => {
 			setIsSuccess(true)
 			cart.clearCart()
 		}
+
+		axios
+			.get('/api/address')
+			.then(response => {
+				setIsLoading(true)
+				console.log(response.data)
+				setValue('name', response.data.name)
+				setValue('email', response.data.email)
+				setValue('city', response.data.city)
+				setValue('postalCode', response.data.postalCode)
+				setValue('streetAddress', response.data.streetAddress)
+				setValue('country', response.data.country)
+			})
+			.finally(() => setIsLoading(false))
 	}, [])
 
 	const total = cart.cart.reduce((acc, product) => {
@@ -165,70 +181,74 @@ const Cart = () => {
 						<RevealWrapper delay={200} className={'md:col-span-5'}>
 							<div className="bg-white rounded-lg p-4 md:p-8">
 								<h2 className="text-2xl font-bold">Order information</h2>
-								<form
-									onSubmit={handleSubmit(createPayment)}
-									className="flex flex-col gap-2"
-								>
-									<Input
-										id="name"
-										label="Name"
-										register={register}
-										errors={errors}
-										type="text"
-										required
-									/>
-									<Input
-										id="email"
-										label="Email"
-										register={register}
-										errors={errors}
-										type="email"
-										required
-									/>
-									<div className="flex flex-row gap-2">
-										<Input
-											id="city"
-											label="City"
-											register={register}
-											errors={errors}
-											type="text"
-											required
-										/>
-										<Input
-											id="postalCode"
-											label="Postal Code"
-											register={register}
-											errors={errors}
-											type="text"
-											required
-										/>
-									</div>
-									<Input
-										id="streetAddress"
-										label="Street Address"
-										register={register}
-										errors={errors}
-										type="text"
-										required
-									/>
-									<Input
-										id="country"
-										label="Country"
-										register={register}
-										errors={errors}
-										type="text"
-										required
-									/>
-									<input {...register('products')} type="hidden" />
-
-									{/* <Button primary label='Continue to payment' /> */}
-									<button
-										type="submit"
-										className="bg-black text-white rounded-lg p-3"
+								{isLoading ? (
+									<Skeleton count={5} height={68} />
+								) : (
+									<form
+										onSubmit={handleSubmit(createPayment)}
+										className="flex flex-col gap-2"
 									>
-										Continue to checkout
-									</button>
-								</form>
+										<Input
+											id="name"
+											label="Name"
+											register={register}
+											errors={errors}
+											type="text"
+											required
+										/>
+										<Input
+											id="email"
+											label="Email"
+											register={register}
+											errors={errors}
+											type="email"
+											required
+										/>
+										<div className="flex flex-row gap-2">
+											<Input
+												id="city"
+												label="City"
+												register={register}
+												errors={errors}
+												type="text"
+												required
+											/>
+											<Input
+												id="postalCode"
+												label="Postal Code"
+												register={register}
+												errors={errors}
+												type="text"
+												required
+											/>
+										</div>
+										<Input
+											id="streetAddress"
+											label="Street Address"
+											register={register}
+											errors={errors}
+											type="text"
+											required
+										/>
+										<Input
+											id="country"
+											label="Country"
+											register={register}
+											errors={errors}
+											type="text"
+											required
+										/>
+										<input {...register('products')} type="hidden" />
+
+										{/* <Button primary label='Continue to payment' /> */}
+										<button
+											type="submit"
+											className="bg-black text-white rounded-lg p-3"
+										>
+											Continue to checkout
+										</button>
+									</form>
+								)}
 							</div>
 						</RevealWrapper>
 					)}

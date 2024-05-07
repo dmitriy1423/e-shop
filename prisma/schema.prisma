@@ -60,6 +60,22 @@ model Product {
   updatedAt     DateTime @updatedAt
 }
 
+model Address {
+  id            String  @id @default(auto()) @map("_id") @db.ObjectId
+  
+  userEmail String? @unique
+
+  name String
+  email String
+  city String
+  postalCode String
+  streetAddress String
+  country String
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
 model Order {
   id            String  @id @default(auto()) @map("_id") @db.ObjectId
   line_items Json
