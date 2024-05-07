@@ -3,9 +3,13 @@ import { getProductsByCategory } from '@/actions/getProductsByCategory'
 import { Product } from '@prisma/client'
 import Center from '../components/Center'
 import CategoriesClient from './CategoriesClient'
+import { getWishedProducts } from '@/actions/getWishedProducts'
+import { getCurrentUser } from '@/actions/getCurrentUser'
 
 const Categories = async () => {
 	const categories = await getCategories()
+	const user = await getCurrentUser()
+	const wishedProducts = await getWishedProducts(user?.email)
 	const mainCategories = (await getCategories()).filter(
 		c => c.parentId === null
 	)
@@ -16,11 +20,13 @@ const Categories = async () => {
 	}
 
 	return (
-		<div className='pt-24'>
+		<div className="pt-24">
 			<Center>
 				<CategoriesClient
 					mainCategories={mainCategories}
 					categoriesProducts={categoriesProducts}
+					wishedProducts={wishedProducts?.map(i => i.productId)}
+					user={user}
 				/>
 			</Center>
 		</div>

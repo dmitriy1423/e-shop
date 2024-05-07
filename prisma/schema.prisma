@@ -55,9 +55,23 @@ model Product {
   category Category? @relation(fields: [categoryId], references: [id])
 
   properties Json?
+
+  wishedProduct WishedProduct[]
   
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+}
+
+model WishedProduct {
+  id            String  @id @default(auto()) @map("_id") @db.ObjectId
+  userEmail     String
+  productId     String @db.ObjectId
+  product Product @relation(fields: [productId], references: [id])
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([userEmail, productId])
 }
 
 model Address {

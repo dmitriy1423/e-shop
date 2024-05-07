@@ -4,12 +4,20 @@ import { Product } from '@prisma/client'
 import { FC } from 'react'
 import ProductBox from '../components/ProductBox'
 import { RevealWrapper } from 'next-reveal'
+import { SafeUser } from '@/types'
 
 interface ClientProductsProps {
 	products: Product[]
+	wishedProducts?: string[] | null
+	user: SafeUser | null
 }
 
-const ClientProducts: FC<ClientProductsProps> = ({ products }) => {
+const ClientProducts: FC<ClientProductsProps> = ({
+	products,
+	wishedProducts,
+	user
+}) => {
+	console.log(wishedProducts)
 	return (
 		<div>
 			<h1 className="text-3xl font-bold mb-4">All products</h1>
@@ -17,7 +25,11 @@ const ClientProducts: FC<ClientProductsProps> = ({ products }) => {
 				{products.length > 0 &&
 					products.map((product, index) => (
 						<RevealWrapper delay={index * 50} key={product.id}>
-							<ProductBox product={product} key={product.id} />
+							<ProductBox
+								product={product}
+								wished={wishedProducts?.includes(product.id)}
+								user={user}
+							/>
 						</RevealWrapper>
 					))}
 			</div>

@@ -1,6 +1,7 @@
 'use client'
 
 import ProductBox from '@/app/components/ProductBox'
+import { SafeUser } from '@/types'
 import { Category, Product, Property } from '@prisma/client'
 import axios from 'axios'
 import { RevealWrapper } from 'next-reveal'
@@ -17,12 +18,16 @@ interface ClientCategoryProps {
 	category: ExtendedCategory
 	products: Product[]
 	subCategories: ExtendedCategory[]
+	wishedProducts?: string[] | null
+	user: SafeUser | null
 }
 
 const ClientCategory: FC<ClientCategoryProps> = ({
 	category,
 	products,
-	subCategories
+	subCategories,
+	wishedProducts,
+	user
 }) => {
 	const [filtersValues, setFiltersValues] = useState<{ [key: string]: string }>(
 		{}
@@ -145,7 +150,12 @@ const ClientCategory: FC<ClientCategoryProps> = ({
 				<div className="grid gap-8 grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
 					{filteredProducts.map((product, index) => (
 						<RevealWrapper delay={index * 50} key={product.id}>
-							<ProductBox product={product} key={product.id} />
+							<ProductBox
+								product={product}
+								key={product.id}
+								wished={wishedProducts?.includes(product.id)}
+								user={user}
+							/>
 						</RevealWrapper>
 					))}
 				</div>

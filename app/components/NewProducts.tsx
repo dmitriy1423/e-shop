@@ -1,11 +1,12 @@
 'use client'
 
-import { Product } from '@prisma/client'
+import { Product, WishedProduct } from '@prisma/client'
 import { FC } from 'react'
 import styled from 'styled-components'
 import Center from './Center'
 import ProductBox from './ProductBox'
 import { RevealWrapper } from 'next-reveal'
+import { SafeUser } from '@/types'
 
 const ProductsGrid = styled.div`
 	display: grid;
@@ -15,9 +16,16 @@ const ProductsGrid = styled.div`
 
 interface NewProductsProps {
 	products: Product[]
+	wishedProducts?: string[] | null
+	user: SafeUser | null
 }
 
-const NewProducts: FC<NewProductsProps> = ({ products }) => {
+const NewProducts: FC<NewProductsProps> = ({
+	products,
+	wishedProducts,
+	user
+}) => {
+	console.log(wishedProducts)
 	return (
 		<Center>
 			<h2 className="text-3xl mt-7 mb-5 font-bold">New Arrivals</h2>
@@ -25,7 +33,11 @@ const NewProducts: FC<NewProductsProps> = ({ products }) => {
 				{products.length > 0 &&
 					products.map((product, index) => (
 						<RevealWrapper delay={index * 50} key={product.id}>
-							<ProductBox product={product} />
+							<ProductBox
+								product={product}
+								wished={wishedProducts?.includes(product.id)}
+								user={user}
+							/>
 						</RevealWrapper>
 					))}
 			</div>

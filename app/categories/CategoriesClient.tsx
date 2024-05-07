@@ -5,15 +5,20 @@ import { FC } from 'react'
 import ProductBox from '../components/ProductBox'
 import Link from 'next/link'
 import { RevealWrapper } from 'next-reveal'
+import { SafeUser } from '@/types'
 
 interface CategoriesClientProps {
 	mainCategories: Category[]
 	categoriesProducts: { [key: string]: Product[] }
+	wishedProducts?: string[] | null
+	user: SafeUser | null
 }
 
 const CategoriesClient: FC<CategoriesClientProps> = ({
 	mainCategories,
-	categoriesProducts
+	categoriesProducts,
+	wishedProducts,
+	user
 }) => {
 	return (
 		<>
@@ -32,7 +37,12 @@ const CategoriesClient: FC<CategoriesClientProps> = ({
 								{categoriesProducts[category.id].map(
 									(product: Product, index) => (
 										<RevealWrapper delay={index * 50} key={product.id}>
-											<ProductBox key={product.id} product={product} />
+											<ProductBox
+												key={product.id}
+												product={product}
+												wished={wishedProducts?.includes(product.id)}
+												user={user}
+											/>
 										</RevealWrapper>
 									)
 								)}
