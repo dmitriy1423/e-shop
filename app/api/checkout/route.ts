@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/libs/prisma'
 import Stripe from 'stripe'
+import { getCurrentUser } from '@/actions/getCurrentUser'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
-	apiVersion: '2024-04-10',
+	apiVersion: '2024-04-10'
 })
 
 export async function POST(req: NextRequest, res: NextResponse) {
@@ -19,14 +20,17 @@ export async function POST(req: NextRequest, res: NextResponse) {
 				currency: 'USD',
 				unit_amount: product.price * product.quantity,
 				product_data: {
-					name: product.title,
-				},
-			},
+					name: product.title
+				}
+			}
 		})
 	}
 
+	const user = await getCurrentUser()
+
 	const order = await prisma.order.create({
 		data: {
+			userEmail: user?.email as string,
 			line_items,
 			name,
 			email,
@@ -34,8 +38,8 @@ export async function POST(req: NextRequest, res: NextResponse) {
 			postalCode,
 			streetAddress,
 			country,
-			paid: false,
-		},
+			paid: false
+		}
 	})
 
 	const session = await stripe.checkout.sessions.create({
@@ -44,12 +48,10 @@ export async function POST(req: NextRequest, res: NextResponse) {
 		customer_email: email,
 		success_url: process.env.NEXTAUTH_URL + '/cart?success=true',
 		cancel_url: process.env.NEXTAUTH_URL + '/cart?cancelled=true',
-		metadata: { orderId: order.id },
+		metadata: { orderId: order.id }
 	})
 
 	return NextResponse.json({
-		url: session.url,
+		url: session.url
 	})
-
-	/* return NextResponse.json(line_items) */
 }

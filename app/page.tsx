@@ -14,7 +14,6 @@ export default async function Home() {
 	const featuredProduct = await getProductById('66339fbed4366a020200d20f')
 	const newProducts = await getNewProducts()
 	const wishedNewProducts = await getWishedNewProducts(user?.email, newProducts)
-	console.log(wishedNewProducts)
 
 	return (
 		<div className="pt-8">

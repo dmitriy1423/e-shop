@@ -17,7 +17,6 @@ const ClientProducts: FC<ClientProductsProps> = ({
 	wishedProducts,
 	user
 }) => {
-	console.log(wishedProducts)
 	return (
 		<div>
 			<h1 className="text-3xl font-bold mb-4">All products</h1>

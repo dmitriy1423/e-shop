@@ -11,7 +11,9 @@ import axios from 'axios'
 import toast from 'react-hot-toast'
 import Skeleton from 'react-loading-skeleton'
 import ProductBox from '../components/ProductBox'
-import { Product, WishedProduct } from '@prisma/client'
+import { Order, Product, WishedProduct } from '@prisma/client'
+import Tabs from '../components/Tabs'
+import OrderLine from '../components/OrderLine'
 
 interface ClientAccountProps {
 	user: SafeUser | null
@@ -26,9 +28,12 @@ export type WishedExtended = WishedProduct & {
 const ClientAccount: FC<ClientAccountProps> = ({ user, wishedProducts }) => {
 	const [isLoadingAddress, setIsLoadingAddress] = useState(false)
 	const [isLoadingWished, setIsLoadingWished] = useState(false)
+	const [isLoadingOrders, setIsLoadingOrders] = useState(false)
 	const [wishedProductsList, setWishedProductsList] = useState<
 		WishedExtended[]
 	>(wishedProducts || [])
+	const [activeTab, setActiveTab] = useState('Orders')
+	const [orders, setOrders] = useState<Order[]>([])
 
 	const {
 		register,
@@ -92,8 +97,19 @@ const ClientAccount: FC<ClientAccountProps> = ({ user, wishedProducts }) => {
 		}
 	}, [user])
 
+	useEffect(() => {
+		if (user) {
+			setIsLoadingOrders(true)
+			axios
+				.get('/api/orders')
+				.then(responce => {
+					setOrders(responce.data)
+				})
+				.finally(() => setIsLoadingOrders(false))
+		}
+	}, [user])
+
 	const productRemovedFromWishlist = (id: string) => {
-		console.log('----------')
 		setWishedProductsList(products => {
 			return [...products.filter(p => p.productId !== id)]
 		})
@@ -104,30 +120,56 @@ const ClientAccount: FC<ClientAccountProps> = ({ user, wishedProducts }) => {
 			<div className="grid grid-cols-1 md:grid-cols-12 gap-10 my-10">
 				<RevealWrapper className="md:col-span-7" delay={0}>
 					<div className="bg-white p-4 md:p-8 text-center rounded-lg">
-						<h2 className="text-2xl font-bold">Wishlist</h2>
-						{!user && <div>Login to view wishlist</div>}
-						{user && isLoadingWished ? (
-							<Skeleton count={1} height={200} />
-						) : (
+						<Tabs
+							tabs={['Orders', 'Wishlist']}
+							active={activeTab}
+							onChange={setActiveTab}
+						/>
+						{activeTab === 'Orders' && (
 							<>
-								{user && wishedProductsList?.length > 0 ? (
-									<div className="grid gap-8 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
-										{wishedProductsList?.map((wished, index) => (
-											<RevealWrapper delay={index * 50} key={wished.id}>
-												<ProductBox
-													product={wished.product}
-													key={wished.productId}
-													wished={!!wished.product.id}
-													user={user}
-													onRemoveFromWishlist={() =>
-														productRemovedFromWishlist(wished.productId)
-													}
-												/>
-											</RevealWrapper>
-										))}
-									</div>
+								{!user && <div>Login to view wishlist</div>}
+								{user && isLoadingOrders ? (
+									<Skeleton count={1} height={200} />
 								) : (
-									<>{user && <div>No wishlist</div>}</>
+									<div>
+										{orders.length > 0 ? (
+											orders.map(order => (
+												<OrderLine order={order} key={order.id} />
+											))
+										) : (
+											<>{user && <div>No orders</div>}</>
+										)}
+									</div>
+								)}
+							</>
+						)}
+						{activeTab === 'Wishlist' && (
+							<>
+								{!user && <div>Login to view wishlist</div>}
+								{user && isLoadingWished ? (
+									<Skeleton count={1} height={200} />
+								) : (
+									<>
+										{user && wishedProductsList?.length > 0 ? (
+											<div className="grid gap-8 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
+												{wishedProductsList?.map((wished, index) => (
+													<RevealWrapper delay={index * 50} key={wished.id}>
+														<ProductBox
+															product={wished.product}
+															key={wished.productId}
+															wished={!!wished.product.id}
+															user={user}
+															onRemoveFromWishlist={() =>
+																productRemovedFromWishlist(wished.productId)
+															}
+														/>
+													</RevealWrapper>
+												))}
+											</div>
+										) : (
+											<>{user && <div>No wishlist</div>}</>
+										)}
+									</>
 								)}
 							</>
 						)}

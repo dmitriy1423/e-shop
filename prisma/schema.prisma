@@ -92,6 +92,7 @@ model Address {
 
 model Order {
   id            String  @id @default(auto()) @map("_id") @db.ObjectId
+  userEmail String
   line_items Json
   name String
   email String
@@ -131,4 +132,20 @@ model Property {
 
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
+}
+
+
+type line_items {
+  quantity Int
+  price_data price_data
+  product_data product_data
+}
+
+type price_data {
+  currency String
+  unit_amount Float
+}
+
+type product_data {
+  name String
 }
