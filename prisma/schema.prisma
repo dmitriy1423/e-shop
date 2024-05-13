@@ -45,6 +45,21 @@ model User {
   accounts      Account[]
 }
 
+model Admin {
+  id            String  @id @default(auto()) @map("_id") @db.ObjectId
+  email         String  @unique
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Setting {
+  id            String  @id @default(auto()) @map("_id") @db.ObjectId
+  name String @unique
+  values String[]
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
 model Product {
   id            String  @id @default(auto()) @map("_id") @db.ObjectId
   title String
@@ -57,7 +72,21 @@ model Product {
   properties Json?
 
   wishedProduct WishedProduct[]
+
+  reviews Review[]
   
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Review {
+  id            String  @id @default(auto()) @map("_id") @db.ObjectId
+  title String
+  comment String
+  rating Int
+  productId String @db.ObjectId
+  product Product @relation(fields: [productId], references: [id])
+
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 }

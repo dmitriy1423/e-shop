@@ -1,17 +1,16 @@
 'use client'
 
-import styled from 'styled-components'
-import Center from './Center'
-import Button from './Button'
-import { MdAddCard } from 'react-icons/md'
-import { FaCartArrowDown } from 'react-icons/fa'
-import { Product } from '@prisma/client'
-import { FC, useContext } from 'react'
-import Link from 'next/link'
-import Image from 'next/image'
 import { useCartStore } from '@/store/cartStore'
+import { Product } from '@prisma/client'
+import Image from 'next/image'
+import Link from 'next/link'
+import { FC } from 'react'
+import { FaCartArrowDown } from 'react-icons/fa'
+import { MdOutlineImage } from 'react-icons/md'
+import styled from 'styled-components'
+import Button from './Button'
+import Center from './Center'
 import NullData from './NullData'
-import { RevealWrapper } from 'next-reveal'
 
 const Bg = styled.div`
 	background-color: #222222;
@@ -51,10 +50,6 @@ interface FeaturedProps {
 }
 
 const Featured: FC<FeaturedProps> = ({ product }) => {
-	/* const { addProduct } = useContext(CartContext)
-	const addFeaturedToCart = () => {
-		addProduct(product.id)
-	} */
 	const cart = useCartStore()
 
 	if (!product) {
@@ -64,40 +59,52 @@ const Featured: FC<FeaturedProps> = ({ product }) => {
 	return (
 		<Bg>
 			<Center>
-				<div className="flex flex-col items-center md:grid md:grid-cols-2">
+				<div className="flex flex-col items-center justify-center md:px-14 md:grid md:grid-cols-2">
 					<Column>
 						<div className="order-1 md:order-2">
-							<RevealWrapper origin={'left'} delay={0}>
-								<Title>{product.title}</Title>
-								<Desc>{product.description}</Desc>
-								<ButtonsWrapper>
-									<Link
-										href={`/product/${product.id}`}
-										className="flex items-center border border-white rounded-lg px-2"
-									>
-										Read more
-									</Link>
-									<div className="max-w-[600px]">
-										<Button
-											onClick={() => cart.addToCart(product)}
-											label="Add to cart"
-											icon={FaCartArrowDown}
-											white
-										/>
-									</div>
-								</ButtonsWrapper>
-							</RevealWrapper>
+							{/* <RevealWrapper origin={'left'} delay={0}> */}
+							<Title>{product.title}</Title>
+							<Desc>{product.description}</Desc>
+							<ButtonsWrapper>
+								<Link
+									href={`/product/${product.id}`}
+									className="flex items-center border border-white rounded-lg px-2"
+								>
+									Read more
+								</Link>
+								<div className="max-w-[600px]">
+									<Button
+										onClick={() => cart.addToCart(product)}
+										label="Add to cart"
+										icon={FaCartArrowDown}
+										white
+									/>
+								</div>
+							</ButtonsWrapper>
+							{/* </RevealWrapper> */}
 						</div>
 					</Column>
-					<div className="flex justify-center -order-1 md:order-1">
-						<RevealWrapper delay={0}>
+					<div
+						className={`flex justify-center -order-1 md:order-1 ${
+							!!product.images[0] === false && 'aspect-square'
+						}`}
+					>
+						{/* <RevealWrapper delay={0}> */}
+						{!!product.images[0] ? (
 							<Image
 								src={product.images[0]}
 								alt={product.title}
 								width={250}
 								height={250}
 							/>
-						</RevealWrapper>
+						) : (
+							<MdOutlineImage
+								className="w-full h-full"
+								width={250}
+								height={250}
+							/>
+						)}
+						{/* </RevealWrapper> */}
 					</div>
 				</div>
 			</Center>

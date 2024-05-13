@@ -25,7 +25,6 @@ const NewProducts: FC<NewProductsProps> = ({
 	wishedProducts,
 	user
 }) => {
-	console.log(wishedProducts)
 	return (
 		<Center>
 			<h2 className="text-3xl mt-7 mb-5 font-bold">New Arrivals</h2>

@@ -42,13 +42,30 @@ export async function POST(req: NextRequest, res: NextResponse) {
 		}
 	})
 
+	const shippingFeeSetting = await prisma.setting.findUnique({
+		where: { name: 'shippingFee' }
+	})
+
 	const session = await stripe.checkout.sessions.create({
 		line_items,
 		mode: 'payment',
 		customer_email: email,
 		success_url: process.env.NEXTAUTH_URL + '/cart?success=true',
 		cancel_url: process.env.NEXTAUTH_URL + '/cart?cancelled=true',
-		metadata: { orderId: order.id }
+		metadata: { orderId: order.id },
+		allow_promotion_codes: true,
+		shipping_options: [
+			{
+				shipping_rate_data: {
+					display_name: 'shipping fee',
+					type: 'fixed_amount',
+					fixed_amount: {
+						amount: Number(shippingFeeSetting?.values[0]),
+						currency: 'USD'
+					}
+				}
+			}
+		]
 	})
 
 	return NextResponse.json({

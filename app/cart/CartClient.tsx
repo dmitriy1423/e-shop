@@ -21,6 +21,7 @@ const CartClient: FC<CartClientProps> = ({ user }) => {
 	const cart = useCartStore()
 	const [isSuccess, setIsSuccess] = useState(false)
 	const [isLoading, setIsLoading] = useState(false)
+	const [shippingFee, setShippingFee] = useState(0)
 
 	const {
 		register,
@@ -53,12 +54,15 @@ const CartClient: FC<CartClientProps> = ({ user }) => {
 			cart.clearCart()
 		}
 
+		axios.get('/api/settings?name=shippingFee').then(response => {
+			setShippingFee(response.data.values)
+		})
+
 		if (user) {
 			axios
 				.get('/api/address')
 				.then(response => {
 					if (user) setIsLoading(true)
-					console.log(response.data)
 					setValue('name', response.data.name)
 					setValue('email', response.data.email)
 					setValue('city', response.data.city)
@@ -70,7 +74,7 @@ const CartClient: FC<CartClientProps> = ({ user }) => {
 		}
 	}, [user])
 
-	const total = cart.cart.reduce((acc, product) => {
+	const productsTotal = cart.cart.reduce((acc, product) => {
 		acc += product.price * product.quantity
 		return acc
 	}, 0)
@@ -116,9 +120,9 @@ const CartClient: FC<CartClientProps> = ({ user }) => {
 										<thead>
 											<tr>
 												<th>Product</th>
-												<th>Quantity</th>
-												<th>Price</th>
-												<th>Total</th>
+												<th className="text-center">Quantity</th>
+												<th className="text-center">Price</th>
+												<th className="text-right">Total</th>
 											</tr>
 										</thead>
 										<tbody>
@@ -166,14 +170,27 @@ const CartClient: FC<CartClientProps> = ({ user }) => {
 															/>
 														</div>
 													</td>
-													<td>${product.price}</td>
-													<td>${product.price * product.quantity}</td>
+													<td className="text-center">${product.price}</td>
+													<td className="text-right">
+														${product.price * product.quantity}
+													</td>
 												</tr>
 											))}
 											<tr>
-												<td>Total:</td>
-												<td></td>
-												<td>${total}</td>
+												<td colSpan={2}>Products</td>
+												<td className="text-right font-bold">
+													${productsTotal}
+												</td>
+											</tr>
+											<tr>
+												<td colSpan={2}>Shipping</td>
+												<td className="text-right font-bold">${shippingFee}</td>
+											</tr>
+											<tr className="total">
+												<td colSpan={2}>Total</td>
+												<td className="text-right font-bold">
+													${+productsTotal + +shippingFee}
+												</td>
 											</tr>
 										</tbody>
 									</table>
@@ -247,7 +264,6 @@ const CartClient: FC<CartClientProps> = ({ user }) => {
 										/>
 										<input {...register('products')} type="hidden" />
 
-										{/* <Button primary label='Continue to payment' /> */}
 										<button
 											type="submit"
 											className="bg-black text-white rounded-lg p-3"
